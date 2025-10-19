@@ -11,7 +11,9 @@ public class Application {
         CalculatorService service = new CalculatorService();
 
         try {
-            int result = service.sumByDefaultDelimiters(input);
+            int result = service.sum(input);
+
+            System.out.println();
             System.out.println("결과 : " + result);
         } catch (IllegalArgumentException e) {
             System.out.println("잘못된 입력: " + e.getMessage());
