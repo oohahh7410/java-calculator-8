@@ -5,16 +5,12 @@ import calculator.view.InputView;
 import calculator.view.OutputView;
 
 public class Application {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IllegalArgumentException {
         String input = InputView.readInput();
 
         CalculatorService service = new CalculatorService();
 
-        try {
-            int result = service.sum(input);
-            OutputView.printResult(result);
-        } catch (IllegalArgumentException e) {
-            OutputView.printError(e.getMessage());
-        }
+        int result = service.sum(input);
+        OutputView.printResult(result);
     }
 }

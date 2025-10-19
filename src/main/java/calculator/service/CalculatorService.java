@@ -31,13 +31,26 @@ public class CalculatorService {
     }
 
     private String[] parseCustomDelimiter(String input) {
-        int index = input.indexOf(LINE_SEPARATOR);
-        if (index == -1) {
-            throw new IllegalArgumentException("커스텀 구분자 형식이 올바르지 않습니다.");
+        // 1) 실제 개행들을 전부 \n 으로 정규화
+        String normalized = input.replaceAll("\\r\\n|\\r|\\n", "\n");
+
+        int idx = normalized.indexOf('\n');
+        String customDelimiter;
+        String numbersPart;
+
+        if (idx != -1) {
+            customDelimiter = normalized.substring(2, idx);
+            numbersPart = normalized.substring(idx + 1);
+        } else {
+            // 2) 리터럴 "\n" 이 들어온 경우 지원
+            int lit = input.indexOf("\\n");
+            if (lit == -1) {
+                throw new IllegalArgumentException("커스텀 구분자 형식이 올바르지 않습니다.");
+            }
+            customDelimiter = input.substring(2, lit);
+            numbersPart = input.substring(lit + 2);
         }
 
-        String customDelimiter = input.substring(2, index);
-        String numbersPart = input.substring(index + 1);
         return numbersPart.split(Pattern.quote(customDelimiter));
     }
 
