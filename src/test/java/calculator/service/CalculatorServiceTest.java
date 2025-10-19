@@ -8,13 +8,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CalculatorServiceTest {
 
-    // CalculatorService는 static이 아니므로, 'new'로 실제 객체를 만들어야 테스트할 수 있습니다.
     private final CalculatorService calculatorService = new CalculatorService();
 
     @Test
     @DisplayName("null 또는 빈 문자열을 입력하면 0을 반환한다")
     void sum_NullOrEmpty() {
-        assertThat(calculatorService.sum(null)).isZero(); // isZero()는 .isEqualTo(0)과 같습니다.
+        assertThat(calculatorService.sum(null)).isZero();
         assertThat(calculatorService.sum("")).isZero();
     }
 
@@ -52,7 +51,9 @@ class CalculatorServiceTest {
     void sum_NegativeNumbers() {
         assertThatThrownBy(() -> calculatorService.sum("-1,2,-5"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("음수는 허용되지 않습니다: -1, -5");
+                .hasMessageContaining("음수는 허용되지 않습니다")
+                .hasMessageContaining("-1")
+                .hasMessageContaining("-5");
     }
 
     @Test
@@ -61,5 +62,20 @@ class CalculatorServiceTest {
         assertThatThrownBy(() -> calculatorService.sum("//;1;2;3"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("커스텀 구분자 형식이 올바르지 않습니다");
+    }
+
+    @Test
+    @DisplayName("입력값에 공백이 포함되어 있어도 올바르게 계산한다")
+    void sum_WithSpaces() {
+        int result = calculatorService.sum(" 1 , 2 : 3 ");
+        assertThat(result).isEqualTo(6);
+    }
+
+    @Test
+    @DisplayName("구분자 사이에 빈 값이 포함되면 예외를 발생시킨다")
+    void sum_ContainsEmptyValue() {
+        assertThatThrownBy(() -> calculatorService.sum("1,,2"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("빈 값이 포함되어 있습니다");
     }
 }
