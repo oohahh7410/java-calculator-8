@@ -1,15 +1,20 @@
 package calculator;
 
 import camp.nextstep.edu.missionutils.Console;
+import calculator.service.CalculatorService;
 
 public class Application {
     public static void main(String[] args) {
         System.out.println("덧셈할 문자열을 입력해 주세요.");
         String input = Console.readLine();
 
-        StringCalculator calculator = new StringCalculator();
-        int result = calculator.calculate(input);
+        CalculatorService service = new CalculatorService();
 
-        System.out.println(result);
+        try {
+            int result = service.sumByDefaultDelimiters(input);
+            System.out.println("결과 : " + result);
+        } catch (IllegalArgumentException e) {
+            System.out.println("잘못된 입력: " + e.getMessage());
+        }
     }
 }
