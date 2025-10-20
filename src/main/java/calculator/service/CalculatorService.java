@@ -11,7 +11,6 @@ public class CalculatorService {
 
     private static final String DEFAULT_DELIMITER_REGEX = "[,:]";
     private static final String CUSTOM_PREFIX = "//";
-    private static final String LINE_SEPARATOR = "\n";
 
     public int sum(String input) {
         if (StringUtils.isNullOrEmpty(input)) {
@@ -31,27 +30,30 @@ public class CalculatorService {
     }
 
     private String[] parseCustomDelimiter(String input) {
-        // 1) 실제 개행들을 전부 \n 으로 정규화
         String normalized = input.replaceAll("\\r\\n|\\r|\\n", "\n");
-
         int idx = normalized.indexOf('\n');
+
         String customDelimiter;
         String numbersPart;
 
         if (idx != -1) {
-            customDelimiter = normalized.substring(2, idx);
+            customDelimiter = normalized.substring(2, idx).trim();
             numbersPart = normalized.substring(idx + 1);
         } else {
-            // 2) 리터럴 "\n" 이 들어온 경우 지원
             int lit = input.indexOf("\\n");
             if (lit == -1) {
                 throw new IllegalArgumentException("커스텀 구분자 형식이 올바르지 않습니다.");
             }
-            customDelimiter = input.substring(2, lit);
+            customDelimiter = input.substring(2, lit).trim();
             numbersPart = input.substring(lit + 2);
         }
 
-        return numbersPart.split(Pattern.quote(customDelimiter));
+        if (customDelimiter.matches("\\d+")) {
+            throw new IllegalArgumentException("숫자는 구분자로 사용할 수 없습니다: " + customDelimiter);
+        }
+
+        String regex = Pattern.quote(customDelimiter) + "|,|:";
+        return numbersPart.split(regex);
     }
 
     private int validateAndSum(int[] numbers) {

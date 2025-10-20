@@ -78,4 +78,19 @@ class CalculatorServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("빈 값이 포함되어 있습니다");
     }
+
+    @Test
+    @DisplayName("커스텀 구분자가 숫자면 예외를 발생시킨다")
+    void sum_CustomDelimiterIsNumber_ThrowsException() {
+        assertThatThrownBy(() -> calculatorService.sum("//6\n56"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("숫자는 구분자로 사용할 수 없습니다");
+    }
+
+    @Test
+    @DisplayName("커스텀 구분자와 기본 구분자(, :)가 함께 있을 때 정상 동작한다")
+    void sum_CustomDelimiterAndDefaultMixed() {
+        int result = calculatorService.sum("//^\n5^2:5");
+        assertThat(result).isEqualTo(12);
+    }
 }
