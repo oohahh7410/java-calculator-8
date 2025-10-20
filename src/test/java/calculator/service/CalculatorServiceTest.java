@@ -93,4 +93,21 @@ class CalculatorServiceTest {
         int result = calculatorService.sum("//^\n5^2:5");
         assertThat(result).isEqualTo(12);
     }
+
+    @Test
+    @DisplayName("커스텀 구분자가 빈 문자열이면 예외를 발생시킨다")
+    void sum_CustomDelimiterEmpty() {
+        assertThatThrownBy(() -> calculatorService.sum("//\n1,2,3"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("커스텀 구분자가 비어있습니다");
+    }
+
+    @Test
+    @DisplayName("커스텀 구분자가 공백이면 예외를 발생시킨다")
+    void sum_CustomDelimiterBlank() {
+        assertThatThrownBy(() -> calculatorService.sum("// \n1 2 3"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("공백은 구분자로 사용할 수 없습니다");
+    }
+
 }

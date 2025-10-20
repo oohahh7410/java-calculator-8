@@ -37,15 +37,23 @@ public class CalculatorService {
         String numbersPart;
 
         if (idx != -1) {
-            customDelimiter = normalized.substring(2, idx).trim();
+            customDelimiter = normalized.substring(2, idx);
             numbersPart = normalized.substring(idx + 1);
         } else {
             int lit = input.indexOf("\\n");
             if (lit == -1) {
                 throw new IllegalArgumentException("커스텀 구분자 형식이 올바르지 않습니다.");
             }
-            customDelimiter = input.substring(2, lit).trim();
+            customDelimiter = input.substring(2, lit);
             numbersPart = input.substring(lit + 2);
+        }
+
+        if (customDelimiter.isEmpty()) {
+            throw new IllegalArgumentException("커스텀 구분자가 비어있습니다.");
+        }
+
+        if (customDelimiter.equals(" ")) {
+            throw new IllegalArgumentException("공백은 구분자로 사용할 수 없습니다.");
         }
 
         if (customDelimiter.matches("\\d+")) {
